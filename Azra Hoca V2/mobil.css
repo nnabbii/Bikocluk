@@ -1,0 +1,156 @@
+/* mobile.css */
+
+/* 1) Navbar: linkleri gizle (hamburger eklenene kadar) */
+.navbar-links {
+  display: none !important;
+}
+
+/* 2) Hero bölümü: dikey akış, ortalı metin */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+.hero-content {
+  max-width: 100%;
+  text-align: center;
+}
+.hero-content h1 {
+  font-size: 1.8rem;
+}
+.hero-content h2 {
+  font-size: 1.2rem;
+  margin-top: 0.5em;
+}
+.hero-content p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.hero-image {
+  margin-top: 20px;
+  width: 100%;
+}
+.hero-image img {
+  width: 100%;
+  height: auto;
+}
+
+/* 3) “Biz Kimiz” bölümü: alt alta */
+.about-section {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.about-left,
+.about-right {
+  width: 100%;
+  text-align: center;
+}
+.about-left {
+  margin-bottom: 20px;
+}
+
+/* 4) Özellikler listesi (features): tek sütun */
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* 5) İstatistikler (stats): dikey akış */
+.stats-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+.stats-section .stat-item {
+  margin-bottom: 15px;
+}
+
+/* 6) Koçluk bölümü: blok akış */
+.kocluk-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+}
+.kocluk-image,
+.kocluk-content {
+  width: 100%;
+}
+.kocluk-image img {
+  width: 80%;
+  margin: 0 auto;
+  height: auto;
+}
+
+/* 7) SSS akordeon: dar genişlikte iç boşluk */
+.sss {
+  padding: 0 20px;
+}
+.sss-item h3 {
+  font-size: 1rem;
+}
+.sss-content ul li {
+  font-size: 0.9rem;
+}
+
+/* 8) Countdown: iki sütunlu grid */
+.countdown-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+.countdown-item {
+  width: 100%;
+  max-width: 140px;
+  margin: 0 auto;
+}
+
+/* 9) Özellik kartları (features-grid): tek sütun */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* 10) Footer sütunları: blok akış */
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px 20px;
+}
+.footer-content > div {
+  width: 100%;
+  text-align: center;
+}
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* 11) Daha küçük cihazlar (<480px) için ince ayarlar */
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+  .hero-content h2 {
+    font-size: 1rem;
+  }
+  .destek-button,
+  .kocluk-button,
+  .cta-button {
+    padding: 0.6em 1.2em;
+    font-size: 0.9rem;
+  }
+  #night-mode-toggle {
+    font-size: 1.4rem;
+    padding: 12px 10px;
+  }
+}
