@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Geri Sayım</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            background-color: #fff; /* Normal mod için beyaz arka plan */
+            transition: background-color 0.5s ease, color 0.5s ease;
+            /* Navigasyon çubuğu (.navbar-container) yüksekliğine göre padding-top ayarlanmalı.
+               Mevcut 100px, 80px'lik bir navbar için genellikle yeterlidir. */
+            padding-top: 100px; 
+            box-sizing: border-box;
+            position: relative; /* Baloncukların doğru konumlanması için */
+            overflow-x: hidden; /* Yatay taşmayı engelle */
+        }
+
+        body.night-mode {
+            color: #f0f0f0;
+            /* background: linear-gradient(-45deg, #232526, #414345, #28313b, #1c1e22); */ /* Kaldırıldı */
+            /* background-size: 400% 400%; */ /* Kaldırıldı */
+            /* animation: gradientBG 20s ease infinite; */ /* Kaldırıldı */
+            background-color: #1a1a1a; /* Karanlık mod için koyu arka plan */
+        }
+
+        /* @keyframes gradientBG { */ /* Artık kullanılmıyor, kaldırıldı */
+        /*     0% { background-position: 0% 50%; } */
+        /*     50% { background-position: 100% 50%; } */
+        /*     100% { background-position: 0% 50%; } */
+        /* } */
+
+        /* Baloncuk Arka Plan Stilleri - YENİ EKLENDİ */
+        .bubbles-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* İçeriğin arkasında kalması için */
+            overflow: hidden;
+        }
+
+        .bubbles-background span {
+            position: absolute;
+            bottom: -120px; 
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: rise 20s infinite ease-in;
+            opacity: 0;
+            filter: blur(12px); /* Baloncuklara bulanıklık efekti */
+            /* Normal mod için varsayılan mor renk (nth-child ile özelleştirilecek) */
+            background-color: rgba(128, 0, 128, 0.35); /* Alfa değeri bulanıklıkla iyi görünmesi için ayarlandı */
+        }
+
+        /* Farklı boyut, pozisyon, süre ve MOR renklerde baloncuklar (Normal Mod) */
+        .bubbles-background span:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 18s; animation-delay: 0s; background-color: rgba(148, 0, 211, 0.4); }
+        .bubbles-background span:nth-child(2) { width: 30px; height: 30px; left: 20%; animation-duration: 12s; animation-delay: 1.5s; background-color: rgba(153, 50, 204, 0.45); }
+        .bubbles-background span:nth-child(3) { width: 50px; height: 50px; left: 30%; animation-duration: 20s; animation-delay: 2.5s; background-color: rgba(186, 85, 211, 0.35); }
+        .bubbles-background span:nth-child(4) { width: 90px; height: 90px; left: 40%; animation-duration: 16s; animation-delay: 0.5s; background-color: rgba(128, 0, 128, 0.5); }
+        .bubbles-background span:nth-child(5) { width: 35px; height: 35px; left: 50%; animation-duration: 13s; animation-delay: 1s; background-color: rgba(218, 112, 214, 0.4); }
+        .bubbles-background span:nth-child(6) { width: 60px; height: 60px; left: 60%; animation-duration: 19s; animation-delay: 3s; background-color: rgba(147, 112, 219, 0.45); }
+        .bubbles-background span:nth-child(7) { width: 25px; height: 25px; left: 70%; animation-duration: 11s; animation-delay: 0.2s; background-color: rgba(199, 21, 133, 0.35); }
+        .bubbles-background span:nth-child(8) { width: 70px; height: 70px; left: 80%; animation-duration: 17s; animation-delay: 2s; background-color: rgba(221, 160, 221, 0.45); }
+        .bubbles-background span:nth-child(9) { width: 45px; height: 45px; left: 90%; animation-duration: 14s; animation-delay: 0.8s; background-color: rgba(180, 80, 200, 0.42); }
+        .bubbles-background span:nth-child(10) { width: 100px; height: 100px; left: 5%; animation-duration: 22s; animation-delay: 1.2s; background-color: rgba(160, 32, 240, 0.38); }
+        .bubbles-background span:nth-child(11) { width: 55px; height: 55px; left: 25%; animation-duration: 15s; animation-delay: 3.5s; background-color: rgba(138, 43, 226, 0.41); }
+        .bubbles-background span:nth-child(12) { width: 75px; height: 75px; left: 75%; animation-duration: 21s; animation-delay: 0.7s; background-color: rgba(177, 100, 220, 0.48); }
+
+        /* Karanlık Mod için TURUNCU Baloncuk Renkleri */
+        body.night-mode .bubbles-background span:nth-child(1) { background-color: rgba(255, 165, 0, 0.4); } /* Orange */
+        body.night-mode .bubbles-background span:nth-child(2) { background-color: rgba(255, 140, 0, 0.45); }  /* Dark Orange */
+        body.night-mode .bubbles-background span:nth-child(3) { background-color: rgba(255, 192, 70, 0.35); } /* Light Orange */
+        body.night-mode .bubbles-background span:nth-child(4) { background-color: rgba(240, 178, 60, 0.5); } /* Gold-ish Orange */
+        body.night-mode .bubbles-background span:nth-child(5) { background-color: rgba(255, 150, 50, 0.4); }
+        body.night-mode .bubbles-background span:nth-child(6) { background-color: rgba(230, 160, 40, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(7) { background-color: rgba(255, 180, 80, 0.35); }
+        body.night-mode .bubbles-background span:nth-child(8) { background-color: rgba(220, 140, 30, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(9) { background-color: rgba(250, 190, 85, 0.42); }
+        body.night-mode .bubbles-background span:nth-child(10) { background-color: rgba(255, 130, 20, 0.38); }
+        body.night-mode .bubbles-background span:nth-child(11) { background-color: rgba(245, 170, 65, 0.41); }
+        body.night-mode .bubbles-background span:nth-child(12) { background-color: rgba(235, 155, 45, 0.48); }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0; 
+            }
+            10% {
+                opacity: 1; 
+            }
+            90% {
+                opacity: 0.5; 
+            }
+            100% {
+                transform: translateY(-120vh) rotate(720deg); 
+                opacity: 0;
+                bottom: 120vh; 
+            }
+        }
+
+        /* Navbar Stilleri */
+        .navbar {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000; 
+            /* style.css dosyanızdan gelen arkaplan, gölge gibi stiller burada da geçerli olacaktır. */
+            /* Örneğin: background-color: rgba(255, 255, 255, 0.2); */
+            /* backdrop-filter: blur(5px); */
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* Bu, ana navbar bileşenlerini (logo, linkler, cta) alta hizalar */
+            max-width: 1200px; 
+            margin: 0 auto; /* Yatayda ortalar */
+            padding: 0 20px; 
+            height: 80px;    /* Navigasyon çubuğunun istenen sabit yüksekliği */
+        }
+
+        .navbar-logo { /* Logonun bulunduğu div */
+            display: flex; 
+            align-items: center;
+            height: 100%; /* .navbar-container'ın yüksekliğini alır (yani 80px) */
+        }
+        
+        .navbar-logo a {
+            display: inline-flex; 
+            align-items: center;
+            height: 100%; /* .navbar-logo div'inin yüksekliğini alır (yani 80px) */
+        }
+        
+        .navbar-logo img {
+            height: 160px; /* Logo bu yükseklikte olacak ve 80px'lik <a> içinde taşacak */
+            width: auto;  /* En-boy oranını korur */
+        }
+        
+        /* YENİ EKLENEN STİL: Navigasyon linklerinin içeriğini düzenler */
+        .navbar-links li a {
+            display: flex; /* İkon ve metni yan yana getirmek için */
+            flex-direction: row; /* Öğelerin yatayda sıralanmasını sağlar */
+            align-items: center; /* İkon ve metni dikeyde ortalar */
+            white-space: nowrap; /* "Ana Sayfa" gibi metinlerin tek satırda kalmasını sağlar */
+            gap: 0.4em; /* İkon ve metin arasına küçük bir boşluk ekler (isteğe bağlı) */
+        }
+
+        /* "İletişime Geç!" butonunu sağa kaydırmak için container'ına margin ekliyoruz */
+        .navbar-cta {
+            margin-left: 20px; /* Bu değeri isteğinize göre ayarlayabilirsiniz */
+        }
+
+        /* İletişime Geç butonu için stiller */
+        .navbar-cta .cta-button {
+            display: inline-flex; /* İçeriği (metin/ikon) hizalamak ve butonun satır içi gibi davranmasını sağlamak için */
+            align-items: center;  /* İçeriği (metin) dikeyde ortalar */
+            justify-content: center; /* İçeriği (metin) yatayda ortalar */
+            white-space: nowrap; /* Metnin alt satıra kaymasını engeller */
+            /* Not: Butonunuzun padding, border, background-color gibi temel stilleri 
+               muhtemelen style.css dosyanızda veya burada tanımlanmıştır/tanımlanacaktır. 
+               Bu eklenenler, metin düzeni ve hizalama içindir. */
+        }
+        
+        /* Gece modunda logo için özel bir stil gerekirse buraya eklenebilir */
+        body.night-mode .navbar-logo a img {
+            /* Örn: filter: brightness(0) invert(1); Eğer logo gece modunda iyi görünmüyorsa */
+        }
+
+
+        /* Mevcut header stilleri kaldırılacak veya yorum satırına alınacak, çünkü header elementi kaldırılıyor. */
+        /*
+        header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        body.night-mode header {
+            background-color: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        body.night-mode header h1 {
+            color: #e0e0e0;
+        }
+        */
+
+        .page-main-title { /* Yeni eklenen ana başlık için stil */
+            font-size: 2.8rem;
+            color: #333;
+            text-align: center;
+            margin-top: 30px; /* Navigasyondan sonra boşluk */
+            margin-bottom: 20px;
+        }
+        body.night-mode .page-main-title {
+            color: #f0f0f0;
+        }
+
+        .countdown-container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 50px 60px; /* Artırıldı */
+            border-radius: 20px; 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            margin-top: 20px; /* Ana başlıkla arasına biraz boşluk eklendi */
+            width: auto; 
+            max-width: 1100px; /* Artırıldı, daha geniş bir alana yayılması için */
+            margin-left: auto; /* Yatayda ortalamak için */
+            margin-right: auto; /* Yatayda ortalamak için */
+        }
+
+        body.night-mode .countdown-container {
+            background-color: rgba(0, 0, 0, 0.25);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        /* .countdown-container içindeki h1 kaldırıldığı için bu kural artık gereksiz veya farklı bir amaç için kullanılabilir.
+           Şimdilik yorum satırına alıyorum.
+        .countdown-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        */
+
+        .timer-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 30px; /* Artırıldı */
+        }
+
+        .time-block {
+            text-align: center;
+            min-width: 200px; /* Artırıldı */
+        }
+
+        .number {
+            font-size: 12rem; /* Önemli ölçüde artırıldı */
+            font-weight: bold;
+            line-height: 1;
+            display: block;
+        }
+
+        .label {
+            font-size: 2rem; /* Artırıldı */
+            text-transform: uppercase;
+            margin-top: 15px; /* Artırıldı */
+            display: block;
+            color: #555;
+        }
+        
+        body.night-mode .label {
+            color: #aaa;
+        }
+
+        .separator {
+            font-size: 10rem; /* Artırıldı */
+            font-weight: bold;
+            line-height: 1;
+            color: #333;
+            padding-bottom: 2.5rem; /* Dikey hizalama için ayarlandı */
+        }
+
+        body.night-mode .separator {
+            color: #ccc;
+        }
+
+        #night-mode-toggle {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 1.8rem; /* İkon boyutu */
+            cursor: pointer;
+            padding: 18px 15px 18px 20px; /* D-şekli için padding ayarı */
+            background-color: rgba(255, 255, 255, 0.7); /* Gündüz modu arka planı */
+            color: #FFC107; /* Gündüz modu ikon rengi (Güneş için) */
+            border-top-right-radius: 30px; /* D-şekli için */
+            border-bottom-right-radius: 30px; /* D-şekli için */
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            width: auto; /* Genişlik içeriğe göre */
+            height: auto; /* Yükseklik içeriğe göre */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            z-index: 1001;
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.1);
+        }
+        #night-mode-toggle:hover {
+            /* transform: translateY(-50%) translateX(5px); */ /* Hafif dışa çıkma efekti */
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+        body.night-mode #night-mode-toggle {
+            background-color: rgba(30, 30, 30, 0.7); /* Gece modu arka planı */
+            color: #FFC107; /* Gece modu ikon rengi (Güneş için turuncu) - Güncellendi */
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.3);
+        }
+        body.night-mode #night-mode-toggle:hover {
+            background-color: rgba(50, 50, 50, 0.9);
+        }
+
+        #fullscreen-toggle { /* Tam Ekran Düğmesi Stilleri */
+            position: fixed;
+            bottom: 25px; /* Ekranın altından uzaklık */
+            right: 25px;  /* Ekranın sağından uzaklık */
+            font-size: 1.8rem; /* İkon boyutu */
+            cursor: pointer;
+            padding: 12px; /* İç boşluk */
+            background-color: rgba(0,0,0,0.08); /* Gündüz modu arka plan */
+            color: #333; /* Gündüz modu ikon/metin rengi */
+            border-radius: 50%; /* Yuvarlak yapmak için */
+            width: 30px;  /* Genişlik */
+            height: 30px; /* Yükseklik */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+            z-index: 1000; /* Diğer elemanların üzerinde kalması için */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Hafif gölge */
+        }
+        #fullscreen-toggle:hover {
+            background-color: rgba(0,0,0,0.15); /* Hover arka plan rengi */
+            transform: scale(1.1); /* Hover'da hafif büyüme efekti */
+        }
+        body.night-mode #fullscreen-toggle { /* Gece modu için tam ekran düğmesi stilleri */
+            background-color: rgba(255,255,255,0.12); /* Gece modu arka plan */
+            color: #f0f0f0; /* Gece modu ikon/metin rengi */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25); /* Gece modu gölgesi */
+        }
+        body.night-mode #fullscreen-toggle:hover {
+            background-color: rgba(255,255,255,0.2); /* Gece modu hover arka plan rengi */
+        }
+
+        /* Navigasyon Çubuğu için Gece Modu Stilleri */
+        body.night-mode .navbar {
+            background-color: #1a1a1a; /* Koyu navbar arka planı */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Daha belirgin gölge */
+        }
+        body.night-mode .navbar-logo a img {
+            /* Eğer logonuz karanlık modda iyi görünmüyorsa, burada filtre uygulayabilirsiniz. Örn: filter: brightness(0) invert(1); */
+        }
+        body.night-mode .navbar-links li a {
+            color: #cccccc; /* Açık gri link rengi */
+        }
+        body.night-mode .navbar-links li a:hover,
+        body.night-mode .navbar-links li.dropdown-parent:hover > a {
+            color: #ffffff; /* Beyaz hover rengi */
+            background-color: #333333; /* Koyu hover arka planı */
+        }
+        body.night-mode .navbar-links .dropdown-menu {
+            background-color: #2c2c2c; /* Koyu dropdown arka planı */
+            border-color: #444444;
+        }
+        body.night-mode .navbar-links .dropdown-menu li a {
+            color: #bbbbbb;
+        }
+        body.night-mode .navbar-links .dropdown-menu li a:hover {
+            color: #ffffff;
+            background-color: #404040;
+        }
+        body.night-mode .navbar-cta .cta-button {
+            background-color: #007bff; /* Buton rengi aynı kalabilir veya değiştirilebilir */
+            color: #ffffff;
+            border: 1px solid #007bff;
+        }
+        body.night-mode .navbar-cta .cta-button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        /* Font Awesome ikonları için gece modu renkleri (Mağaza, Portal ikonları) */
+        body.night-mode .navbar-links li a .fas {
+            color: #cccccc; /* Linklerle aynı renk */
+        }
+        body.night-mode .navbar-links li a:hover .fas {
+            color: #ffffff; /* Hover durumunda linklerle aynı renk */
+        }
+
+
+        /* Responsive Design Güncellemeleri */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px; /* Responsive navbar yüksekliğine göre ayarlanmış */
+            }
+            .navbar-container {
+                height: 70px; /* Orta boyutlu ekranlar için navbar yüksekliği */
+            }
+            .navbar-logo img { /* Responsive logo boyutu */
+                height: 120px; /* Orta ekranlar için logo yüksekliği - navbar'dan taşacak şekilde ayarlandı */
+            }
+            .page-main-title {
+                font-size: 2.2rem; /* Biraz artırıldı */
+                margin-top: 20px;
+                margin-bottom: 15px;
+            }
+            /* header h1 kaldırıldığı için bu kural gereksiz
+            header h1 {
+                font-size: 1.4rem;
+            }
+            */
+            /* .countdown-container h1 kaldırıldığı için bu kural gereksiz
+            .countdown-container h1 {
+                font-size: 1.8rem;
+            }
+            */
+            .number {
+                font-size: 7rem; /* Responsive sayı boyutu artırıldı */
+            }
+            .label {
+                font-size: 1.4rem; /* Responsive etiket boyutu artırıldı */
+            }
+            .separator {
+                font-size: 6rem; /* Responsive ayırıcı boyutu artırıldı */
+                padding-bottom: 1.8rem; /* Ayarlandı */
+            }
+            .time-block {
+                min-width: 140px; /* Responsive blok genişliği artırıldı */
+            }
+            .timer-display {
+                gap: 15px; /* Ayarlandı */
+            }
+            .countdown-container {
+                padding: 35px 30px; /* Ayarlandı */
+                margin-top: 15px; /* Ayarlandı */
+                max-width: 90%;
+            }
+            #night-mode-toggle {
+                font-size: 1.5rem;
+                padding: 15px 10px 15px 15px;
+                border-top-right-radius: 25px;
+                border-bottom-right-radius: 25px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px; /* Responsive navbar yüksekliğine göre ayarlanmış */
+            }
+            .navbar-container {
+                height: 60px; /* Küçük ekranlar için navbar yüksekliği */
+            }
+            .navbar-logo img { /* Daha küçük ekranlar için responsive logo boyutu */
+                height: 100px; /* Küçük ekranlar için logo yüksekliği - navbar'dan taşacak şekilde ayarlandı */
+            }
+            .page-main-title {
+                font-size: 1.8rem; /* Biraz artırıldı */
+                margin-top: 15px;
+                margin-bottom: 10px;
+            }
+            /* header h1 kaldırıldığı için bu kural gereksiz
+            header h1 {
+                font-size: 1.2rem;
+            }
+            */
+            /* .countdown-container h1 kaldırıldığı için bu kural gereksiz
+            .countdown-container h1 {
+                font-size: 1.5rem;
+            }
+            */
+            .number {
+                font-size: 4.5rem; /* Daha küçük ekranlar için sayı boyutu artırıldı */
+            }
+            .label {
+                font-size: 1rem; /* Daha küçük ekranlar için etiket boyutu artırıldı */
+            }
+            .separator {
+                font-size: 3.5rem; /* Daha küçük ekranlar için ayırıcı boyutu artırıldı */
+                padding-bottom: 1.2rem; /* Ayarlandı */
+            }
+            .time-block {
+                min-width: 90px; /* Daha küçük ekranlar için blok genişliği artırıldı */
+            }
+            .timer-display {
+                gap: 10px; /* Ayarlandı */
+            }
+            .countdown-container {
+                padding: 25px 15px; /* Ayarlandı */
+            }
+            #night-mode-toggle {
+                font-size: 1.3rem;
+                padding: 12px 8px 12px 10px;
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Baloncuk Arka Planı - YENİ EKLENDİ -->
+    <div class="bubbles-background">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="index.html"><img src="css/images/LOGO 1.png" alt="logo" /></a>
+            </div>
+            <ul class="navbar-links">
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li class="dropdown-parent">
+                    <a href="#">YKS Atlas</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pomodoro.html">• POMODORO Zamanlayıcı  •</a></li>
+                        <li><a href="#">• YKS Puan Hesaplama •</a></li>
+                        <li><a href="#">• LGS Puan Hesaplama •</a></li>
+                        <li><a href="ykssayaç.html">• YKS Sayaç •</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#"><i class="fas fa-shopping-bag"></i> Mağaza</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Portal</a></li>
+                <li><a href="#">Bize Ulaşın</a></li>
+            </ul>
+            <div class="navbar-cta">
+                <a href="#" class="cta-button">İletişime geç!</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mevcut header kaldırıldı -->
+    
+    <!-- Yeni Ana Başlık -->
+    <h1 class="page-main-title">2025 YKS'ye Kaç Gün Kaldı?</h1>
+
+    <div id="night-mode-toggle" title="Gece Modu">🌙</div>
+    <div id="fullscreen-toggle" title="Tam Ekran">↗️</div>
+
+    <div class="countdown-container">
+        <!-- <h1>2025 YKS'ye Kaç Gün Kaldı?</h1> Bu satır yukarı taşındı -->
+        <div class="timer-display">
+            <div class="time-block">
+                <span id="days" class="number">00</span>
+                <span class="label">Gün</span>
+            </div>
+            <span class="separator">·</span>
+            <div class="time-block">
+                <span id="hours" class="number">00</span>
+                <span class="label">Saat</span>
+            </div>
+            <span class="separator">·</span>
+            <div class="time-block">
+                <span id="minutes" class="number">00</span>
+                <span class="label">Dakika</span>
+            </div>
+            <span class="separator">·</span>
+            <div class="time-block">
+                <span id="seconds" class="number">00</span>
+                <span class="label">Saniye</span>
+            </div>
+        </div>
+        <div id="countdown-message" style="font-size: 1.5rem; margin-top: 20px; display: none;"></div>
+    </div>
+
+    <script>
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const nightModeToggle = document.getElementById('night-mode-toggle');
+        const fullscreenToggle = document.getElementById('fullscreen-toggle'); // Yeni eklendi
+        const countdownContainer = document.querySelector('.countdown-container');
+        const timerDisplay = document.querySelector('.timer-display');
+        const countdownMessageEl = document.getElementById('countdown-message');
+
+        // YKS 2025 için hedef tarih (Örnek: 14 Haziran 2025, 10:15). Bu tarihi değiştirebilirsiniz.
+        const targetDate = new Date("June 21, 2025 10:15:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                timerDisplay.style.display = 'none';
+                countdownMessageEl.textContent = "Sınav Zamanı!";
+                countdownMessageEl.style.display = 'block';
+                // document.querySelector('.countdown-container h1').textContent = "YKS 2025"; // Bu satır artık gereksiz, ana başlık dışarıda
+                document.querySelector('.page-main-title').textContent = "YKS 2025 Sınavı Tamamlandı!"; // Ana başlığı güncelle
+                clearInterval(countdownInterval);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysEl.textContent = formatTime(days);
+            hoursEl.textContent = formatTime(hours);
+            minutesEl.textContent = formatTime(minutes);
+            secondsEl.textContent = formatTime(seconds);
+        }
+
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        // Gece Modu
+        function toggleNightMode() {
+            document.body.classList.toggle('night-mode');
+            if (document.body.classList.contains('night-mode')) {
+                nightModeToggle.innerHTML = '☀️'; // İkonu Güneş yap
+                nightModeToggle.title = 'Gündüz Modu';
+                localStorage.setItem('nightMode', 'enabled');
+            } else {
+                nightModeToggle.innerHTML = '🌙'; // İkonu Ay yap
+                nightModeToggle.title = 'Gece Modu';
+                localStorage.setItem('nightMode', 'disabled');
+            }
+        }
+
+        nightModeToggle.addEventListener('click', toggleNightMode);
+
+        // Sayfa yüklendiğinde gece modu tercihini ve ikonunu doğru ayarla
+        if (localStorage.getItem('nightMode') === 'enabled') {
+            document.body.classList.add('night-mode'); // Sadece toggleNightMode() çağırmak yerine direkt sınıfı ekle
+            nightModeToggle.innerHTML = '☀️';
+            nightModeToggle.title = 'Gündüz Modu';
+        } else {
+            document.body.classList.remove('night-mode');
+            nightModeToggle.innerHTML = '🌙';
+            nightModeToggle.title = 'Gece Modu';
+        }
+        
+        // Tam Ekran Fonksiyonu - Yeni Eklendi
+        function toggleFullScreen() {
+            if (!document.fullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.msFullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+                    document.documentElement.msRequestFullscreen();
+                }
+                fullscreenToggle.textContent = '↙️';
+                fullscreenToggle.title = 'Tam Ekrandan Çık';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { /* Firefox */
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE/Edge */
+                    document.msExitFullscreen();
+                }
+                fullscreenToggle.textContent = '↗️';
+                fullscreenToggle.title = 'Tam Ekran';
+            }
+        }
+
+        fullscreenToggle.addEventListener('click', toggleFullScreen);
+
+        // Tam ekran durumu değiştiğinde (örn: ESC ile çıkış) ikonu güncelle
+        function updateFullscreenButton() {
+            if (!document.fullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.msFullscreenElement) {
+                fullscreenToggle.textContent = '↗️';
+                fullscreenToggle.title = 'Tam Ekran';
+            } else {
+                fullscreenToggle.textContent = '↙️';
+                fullscreenToggle.title = 'Tam Ekrandan Çık';
+            }
+        }
+
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+
+        // Geri sayımı başlat
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

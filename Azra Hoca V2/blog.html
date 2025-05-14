@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Kategoriler</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* index.html'den kopyalanan stiller (body, bubbles, navbar, night-mode-toggle) */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #333;
+            background-color: #fff; /* Normal mod için beyaz arka plan */
+            transition: background-color 0.5s ease, color 0.5s ease;
+            padding-top: 100px; 
+            box-sizing: border-box;
+            position: relative; 
+            overflow-x: hidden; 
+        }
+
+        body.night-mode {
+            color: #f0f0f0;
+            background-color: #1a1a1a; /* Karanlık mod için koyu arka plan */
+        }
+
+        .bubbles-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+            overflow: hidden;
+        }
+
+        .bubbles-background span {
+            position: absolute;
+            bottom: -120px; 
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: rise 20s infinite ease-in;
+            opacity: 0;
+            filter: blur(12px);
+            background-color: rgba(128, 0, 128, 0.35); 
+        }
+
+        .bubbles-background span:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 18s; animation-delay: 0s; background-color: rgba(148, 0, 211, 0.4); }
+        .bubbles-background span:nth-child(2) { width: 30px; height: 30px; left: 20%; animation-duration: 12s; animation-delay: 1.5s; background-color: rgba(153, 50, 204, 0.45); }
+        .bubbles-background span:nth-child(3) { width: 50px; height: 50px; left: 30%; animation-duration: 20s; animation-delay: 2.5s; background-color: rgba(186, 85, 211, 0.35); }
+        .bubbles-background span:nth-child(4) { width: 90px; height: 90px; left: 40%; animation-duration: 16s; animation-delay: 0.5s; background-color: rgba(128, 0, 128, 0.5); }
+        .bubbles-background span:nth-child(5) { width: 35px; height: 35px; left: 50%; animation-duration: 13s; animation-delay: 1s; background-color: rgba(218, 112, 214, 0.4); }
+        .bubbles-background span:nth-child(6) { width: 60px; height: 60px; left: 60%; animation-duration: 19s; animation-delay: 3s; background-color: rgba(147, 112, 219, 0.45); }
+        .bubbles-background span:nth-child(7) { width: 25px; height: 25px; left: 70%; animation-duration: 11s; animation-delay: 0.2s; background-color: rgba(199, 21, 133, 0.35); }
+        .bubbles-background span:nth-child(8) { width: 70px; height: 70px; left: 80%; animation-duration: 17s; animation-delay: 2s; background-color: rgba(221, 160, 221, 0.45); }
+        .bubbles-background span:nth-child(9) { width: 45px; height: 45px; left: 90%; animation-duration: 14s; animation-delay: 0.8s; background-color: rgba(180, 80, 200, 0.42); }
+        .bubbles-background span:nth-child(10) { width: 100px; height: 100px; left: 5%; animation-duration: 22s; animation-delay: 1.2s; background-color: rgba(160, 32, 240, 0.38); }
+        .bubbles-background span:nth-child(11) { width: 55px; height: 55px; left: 25%; animation-duration: 15s; animation-delay: 3.5s; background-color: rgba(138, 43, 226, 0.41); }
+        .bubbles-background span:nth-child(12) { width: 75px; height: 75px; left: 75%; animation-duration: 21s; animation-delay: 0.7s; background-color: rgba(177, 100, 220, 0.48); }
+
+        body.night-mode .bubbles-background span:nth-child(1) { background-color: rgba(255, 165, 0, 0.4); } 
+        body.night-mode .bubbles-background span:nth-child(2) { background-color: rgba(255, 140, 0, 0.45); } 
+        body.night-mode .bubbles-background span:nth-child(3) { background-color: rgba(255, 192, 70, 0.35); }
+        body.night-mode .bubbles-background span:nth-child(4) { background-color: rgba(240, 178, 60, 0.5); }
+        body.night-mode .bubbles-background span:nth-child(5) { background-color: rgba(255, 150, 50, 0.4); }
+        body.night-mode .bubbles-background span:nth-child(6) { background-color: rgba(230, 160, 40, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(7) { background-color: rgba(255, 180, 80, 0.35); }
+        body.night-mode .bubbles-background span:nth-child(8) { background-color: rgba(220, 140, 30, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(9) { background-color: rgba(250, 190, 85, 0.42); }
+        body.night-mode .bubbles-background span:nth-child(10) { background-color: rgba(255, 130, 20, 0.38); }
+        body.night-mode .bubbles-background span:nth-child(11) { background-color: rgba(245, 170, 65, 0.41); }
+        body.night-mode .bubbles-background span:nth-child(12) { background-color: rgba(235, 155, 45, 0.48); } 
+
+        @keyframes rise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; bottom: 120vh; }
+        }
+
+        .navbar { 
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container { 
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; 
+            max-width: 1200px; 
+            margin: 0 auto;
+            padding: 0 20px; 
+            height: 80px;
+        }
+
+        .navbar-logo { 
+            display: flex; 
+            align-items: center;
+            height: 100%;
+        }
+        
+        .navbar-logo a { 
+            display: inline-flex; 
+            align-items: center;
+            height: 100%;
+        }
+        
+        .navbar-logo img { 
+            height: 160px; 
+            width: auto;
+        }
+        
+        .navbar-links li a { 
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            white-space: nowrap;
+            gap: 0.4em;
+        }
+
+        .navbar-cta { 
+            margin-left: 20px;
+        }
+
+        .navbar-cta .cta-button { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        
+        body.night-mode .navbar {
+            background-color: #1a1a1a; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5); 
+        }
+        
+        body.night-mode .navbar-links li a {
+            color: #cccccc; 
+        }
+        body.night-mode .navbar-links li a:hover,
+        body.night-mode .navbar-links li.dropdown-parent:hover > a { 
+            color: #ffffff; 
+            background-color: #333333; 
+        }
+        body.night-mode .navbar-links .dropdown-menu { 
+            background-color: #2c2c2c; 
+        }
+        body.night-mode .navbar-links .dropdown-menu li a {
+            color: #bbbbbb;
+        }
+        body.night-mode .navbar-links .dropdown-menu li a:hover {
+            color: #ffffff;
+            background-color: #404040;
+        }
+        body.night-mode .navbar-cta .cta-button { 
+            background-color: #007bff; 
+            color: #ffffff;
+            border: 1px solid #007bff; 
+        }
+        body.night-mode .navbar-cta .cta-button:hover {
+            background-color: #0056b3; 
+            border-color: #0056b3; 
+        }
+        body.night-mode .navbar-links li a .fas { 
+            color: #cccccc;
+        }
+        body.night-mode .navbar-links li a:hover .fas {
+            color: #ffffff;
+        }
+
+        #night-mode-toggle {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 18px 15px 18px 20px;
+            background-color: rgba(255, 255, 255, 0.7); 
+            color: #4a4a4a; /* Aydınlık modda ay ikonu için koyu gri renk (Önceki: #FFC107) */
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            width: auto;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            z-index: 1001;
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.1);
+        }
+        #night-mode-toggle:hover {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+        body.night-mode #night-mode-toggle {
+            background-color: rgba(30, 30, 30, 0.7);
+            color: #FFC107; /* Karanlık modda güneş ikonu için sarı renk (Bu zaten doğru) */
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.3);
+        }
+        /* Aşağıdaki özel ikon renk kuralları zaten yorum satırında veya kaldırılmış olmalı,
+           eğer değillerse kaldırın veya yorum satırı yapın. Ana #night-mode-toggle ve
+           body.night-mode #night-mode-toggle kuralları ikon rengini yönetecektir. */
+        /* body.night-mode #night-mode-toggle.fa-moon { 
+             color: #FFC107; 
+        }
+        body.night-mode #night-mode-toggle.fa-sun { 
+             color: #f0f0f0; 
+        }
+        #night-mode-toggle.fa-sun { 
+            color: #FFC107;
+        } */
+        /* #night-mode-toggle.fa-moon {  Bu kural zaten #night-mode-toggle içinde genel olarak ele alındı.
+            color: #FFC107; 
+        } */
+        body.night-mode #night-mode-toggle:hover {
+            background-color: rgba(50, 50, 50, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            body { 
+                padding-top: 80px; 
+            }
+            .navbar-container {
+                height: 70px;
+            }
+            .navbar-logo img {
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-container {
+                height: 60px;
+            }
+            .navbar-logo img {
+                height: 100px;
+            }
+            #night-mode-toggle {
+                font-size: 1.5rem;
+                padding: 15px 12px 15px 18px;
+            }
+        }
+
+        /* Blog içeriği için ek stiller */
+        .main-blog-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto; /* Navbar sonrası ek boşluk ve ortalama */
+            text-align: center; /* Kategoriler başlığını ortalamak için */
+        }
+        .main-blog-content h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: inherit; /* body'den renk alır */
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        @keyframes categoryClickAnimation {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Tıklama efektini güçlendirmek için gölge */
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .category-box {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Yumuşak geçiş için eklendi */
+            /* Örnek kategori kutusu renkleri - görseldeki gibi */
+        }
+
+        .category-box:hover {
+            transform: translateY(-5px) scale(1.03); /* Hafif yukarı kalkma ve büyüme */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Daha belirgin gölge */
+        }
+
+        /* Örnek renkler, görseldeki gibi çeşitlendirilebilir */
+        .category-box.cat-1 { background: linear-gradient(135deg, #FF6B6B, #FF4757); }
+        .category-box.cat-2 { background: linear-gradient(135deg, #54A0FF, #2E86DE); }
+        .category-box.cat-3 { background: linear-gradient(135deg, #FFD93D, #FFC312); }
+        .category-box.cat-4 { background: linear-gradient(135deg, #1DD1A1, #10AC84); }
+        /* Yeni eklenen kategori stilleri */
+        .category-box.cat-5 { background: linear-gradient(135deg, #A569BD, #8E44AD); } /* Mor tonları */
+        .category-box.cat-6 { background: linear-gradient(135deg, #F39C12, #D35400); } /* Turuncu tonları */
+        .category-box.cat-7 { background: linear-gradient(135deg, #3498DB, #2980B9); } /* Mavi tonları (farklı) */
+        .category-box.cat-8 { background: linear-gradient(135deg, #E74C3C, #C0392B); } /* Kırmızı tonları (farklı) */
+        .category-box.cat-9 { background: linear-gradient(135deg, #2ECC71, #27AE60); } /* Yeşil tonları (farklı) */
+        .category-box.cat-10 { background: linear-gradient(135deg, #95A5A6, #7F8C8D); } /* Gri tonları */
+
+        /* Arama Çubuğu Stilleri */
+        .search-container {
+            margin-top: 15px; /* Başlıkla arasında biraz boşluk */
+            margin-bottom: 30px; /* Kategori kutularıyla arasında boşluk */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 15px; /* Kenarlardan biraz boşluk */
+        }
+
+        #categorySearchInput {
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-right: none; /* Butonla birleşik görünüm için */
+            border-radius: 25px 0 0 25px;
+            font-size: 1em;
+            width: 100%; 
+            max-width: 450px; /* Maksimum genişlik */
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #categorySearchInput:focus {
+            border-color: #007bff;
+        }
+
+        #categorySearchButton {
+            padding: 12px 20px;
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 25px 25px 0;
+            cursor: pointer;
+            font-size: 1em;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #categorySearchButton:hover {
+            background-color: #0056b3;
+        }
+
+        /* Gece Modu Arama Çubuğu Stilleri */
+        body.night-mode #categorySearchInput {
+            background-color: #2c2c2c;
+            color: #f0f0f0;
+            border-color: #444;
+        }
+
+        body.night-mode #categorySearchInput:focus {
+            border-color: #007bff;
+        }
+
+        body.night-mode #categorySearchButton {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        body.night-mode #categorySearchButton:hover {
+            background-color: #004494;
+        }
+        /* Gece modunda kategori kutuları için farklı stiller gerekirse buraya eklenebilir */
+
+        /* Popüler Bloglar Bölümü Stilleri */
+        .popular-blogs-section {
+            max-width: 100%;
+            margin: 60px 0;
+            padding: 30px 0;
+            background-color: #f0f3f5; /* Açık mod için arka plan */
+            position: relative;
+        }
+
+        body.night-mode .popular-blogs-section {
+            background-color: #222529; /* Gece modu için arka plan */
+        }
+
+        .popular-blogs-title {
+            font-size: 2.4em;
+            font-weight: 700;
+            margin-bottom: 10px; /* "Milet Blog" ile arasındaki boşluk */
+            color: inherit;
+            padding-left: calc((100% - 1200px) / 2 + 20px); /* Ana içerikle hizalamak için */
+            line-height: 1.2;
+        }
+
+        .popular-blogs-title span { /* "Milet Blog" yazısı için */
+            display: block;
+            font-size: 0.55em; /* Ana başlığa göre oran */
+            color: #FF6B6B; /* Temanıza uygun bir renk */
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        body.night-mode .popular-blogs-title span {
+            color: #ff8f8f;
+        }
+
+        @media (max-width: 1240px) {
+            .popular-blogs-title {
+                padding-left: 25px;
+            }
+        }
+         @media (max-width: 768px) {
+            .popular-blogs-title {
+                font-size: 2em;
+                padding-left: 20px;
+            }
+            .popular-blogs-title span {
+                font-size: 0.5em;
+            }
+        }
+
+
+        .popular-blogs-scroller-container {
+            overflow: hidden; /* Yatay kaydırma çubuğunu gizler */
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .popular-blogs-scroller {
+            display: flex;
+            padding: 10px 0 10px calc((100% - 1200px) / 2 + 20px); /* Soldan başlama pozisyonu */
+            gap: 25px; /* Kartlar arası boşluk */
+            width: fit-content; /* İçerik kadar genişlik */
+            animation: scrollBlogs 60s linear infinite; /* Animasyon süresini artırdık */
+        }
+        
+        @media (max-width: 1240px) {
+            .popular-blogs-scroller {
+                 padding: 10px 0 10px 25px;
+            }
+        }
+        @media (max-width: 768px) {
+            .popular-blogs-scroller {
+                 padding: 10px 0 10px 20px;
+                 gap: 20px;
+            }
+        }
+
+
+        .popular-blogs-scroller-container:hover .popular-blogs-scroller {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollBlogs {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                /* (Kart Genişliği + Gap) * (Toplam Kart Sayısı / 2) */
+                /* Örnek: (320px + 25px) * (8 kart / 2) = 345px * 4 = -1380px */
+                /* HTML'de 8 kart var (6 özgün + 2 kopya), bu yüzden yarısı kadar kaydırıyoruz. */
+                transform: translateX(calc(-1 * ( (320px + 25px) * 6 ))); /* 6 özgün kartın toplam genişliği kadar kaydır */
+            }
+        }
+
+        .blog-card {
+            flex: 0 0 320px; /* Kart genişliği */
+            height: 380px; /* Kart yüksekliği */
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: #444; /* Resim yüklenemezse */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .blog-card {
+                flex-basis: 280px; /* Mobil için kart genişliği */
+                height: 340px;
+            }
+        }
+
+
+        .blog-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .blog-card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0) 100%);
+            color: #ffffff;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transform: translateY(calc(100% - 80px - 20px)); /* Başlık + padding kadar görünsün */
+            transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+         @media (max-width: 768px) {
+            .blog-card-content {
+                 transform: translateY(calc(100% - 70px - 15px));
+                 padding: 15px;
+            }
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .blog-card:hover .blog-card-content {
+            transform: translateY(0);
+        }
+
+        .blog-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .blog-card-title {
+            font-size: 1.25em; /* Görseldeki gibi */
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: calc(1.25em * 1.35 * 2); /* 2 satır için min yükseklik */
+        }
+         @media (max-width: 768px) {
+            .blog-card-title {
+                font-size: 1.1em;
+                 min-height: calc(1.1em * 1.35 * 2);
+            }
+        }
+
+        .blog-card-details {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out 0.15s; /* Hafif gecikme */
+            font-size: 0.85em; /* Görseldeki gibi */
+            line-height: 1.6;
+        }
+
+        .blog-card:hover .blog-card-details {
+            opacity: 1;
+        }
+
+        .blog-card-details .blog-date-time {
+            font-size: 0.9em; /* Ana detay metnine göre */
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
+        .blog-card-details .blog-date-time i {
+            margin-right: 6px;
+            font-size: 0.95em;
+        }
+         .blog-card-details .blog-date-time span { /* Tarih ve saat arası ayırıcı için */
+            margin: 0 8px;
+        }
+
+
+        .blog-card-details .blog-excerpt {
+            color: #f0f0f0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Maksimum 3 satır */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        body.night-mode .blog-card {
+            background-color: #3a3a3a;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        body.night-mode .blog-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+
+    </style>
+</head>
+<body class=""> 
+
+    <div class="bubbles-background">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <i class="fas fa-moon" id="night-mode-toggle" title="Karanlık/Aydınlık Mod"></i>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="index.html"><img src="css/images/LOGO 1.png" alt="logo" /></a>
+            </div>
+            <ul class="navbar-links">
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li class="dropdown-parent">
+                    <a href="#">YKS Atlas</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pomodoro.html">• POMODORO Zamanlayıcı •</a></li>
+                        <li><a href="#">• YKS Puan Hesaplama •</a></li>
+                        <li><a href="#">• LGS Puan Hesaplama •</a></li>
+                        <li><a href="ykssayaç.html">• YKS Sayaç •</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#"><i class="fas fa-shopping-bag"></i> Mağaza</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Portal</a></li>
+                <li><a href="#">Bize Ulaşın</a></li>
+            </ul>
+            <div class="navbar-cta">
+                <a href="#" class="cta-button">İletişime Geç!</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-blog-content">
+        <h1>Kategoriler</h1>
+        <div class="search-container">
+            <input type="text" placeholder="Kategorilerde Ara..." id="categorySearchInput">
+            <button type="button" id="categorySearchButton"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="category-grid">
+            <!-- Görseldeki gibi kategori kutuları buraya eklenebilir -->
+            <!-- Örnek birkac kutu -->
+            <div class="category-box cat-1">TYT Konuları</div>
+            <div class="category-box cat-2">AYT Konuları</div>
+            <div class="category-box cat-3">Açık Lise</div>
+            <div class="category-box cat-4">9. Sınıf Konuları</div>
+            <div class="category-box cat-4">10. Sınıf Konuları</div>
+            <div class="category-box cat-4">11. Sınıf Konuları</div>
+            <div class="category-box cat-4">12. Sınıf Konuları</div>
+            <div class="category-box cat-5">YKS</div>
+            <div class="category-box cat-6">TYT</div>
+            <div class="category-box cat-7">AYT</div>
+            <div class="category-box cat-8">Kişisel Gelişim</div>
+            <div class="category-box cat-9">Kaynaklar</div>
+            <div class="category-box cat-10">PDF Konu Özetlerimiz</div>
+            <!-- Diğer kategoriler... -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nightModeToggle = document.getElementById('night-mode-toggle');
+            const body = document.body;
+
+            // Kayıtlı temayı uygula
+            const applyTheme = () => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'night-mode') {
+                    body.classList.add('night-mode');
+                    nightModeToggle.classList.remove('fa-moon');
+                    nightModeToggle.classList.add('fa-sun');
+                } else { // 'light-mode' veya kayıt yoksa (varsayılan aydınlık mod)
+                    body.classList.remove('night-mode');
+                    nightModeToggle.classList.remove('fa-sun');
+                    nightModeToggle.classList.add('fa-moon');
+                }
+            };
+
+            applyTheme();
+
+            nightModeToggle.addEventListener('click', () => {
+                body.classList.toggle('night-mode'); 
+
+                if (body.classList.contains('night-mode')) {
+                    nightModeToggle.classList.remove('fa-moon');
+                    nightModeToggle.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'night-mode');
+                } else {
+                    nightModeToggle.classList.remove('fa-sun');
+                    nightModeToggle.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light-mode'); // 'light-mode' olarak kaydediliyor
+                }
+            });
+
+            // Navbar scroll davranışı (index.html'den alındı)
+            let lastScroll = 0;
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                if (currentScroll <= 0) { // Sayfanın en üstü
+                    navbar.classList.remove('navbar--hidden');
+                    return;
+                }
+                if (currentScroll > lastScroll && !navbar.classList.contains('navbar--hidden')) {
+                    // Aşağı scroll
+                    navbar.classList.add('navbar--hidden');
+                } else if (currentScroll < lastScroll && navbar.classList.contains('navbar--hidden')) {
+                    // Yukarı scroll
+                    navbar.classList.remove('navbar--hidden');
+                }
+                lastScroll = currentScroll;
+            });
+
+            // Kategori Arama ve Tıklama İşlevselliği
+            const searchInput = document.getElementById('categorySearchInput');
+            const categoryBoxes = document.querySelectorAll('.category-grid .category-box');
+
+            if (searchInput && categoryBoxes.length > 0) {
+                const filterCategories = () => {
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+                    categoryBoxes.forEach(box => {
+                        const categoryName = box.textContent.toLowerCase();
+                        if (categoryName.includes(searchTerm)) {
+                            box.classList.remove('hidden');
+                        } else {
+                            box.classList.add('hidden');
+                        }
+                    });
+                };
+                searchInput.addEventListener('input', filterCategories);
+            }
+
+            categoryBoxes.forEach(box => {
+                box.style.cursor = 'pointer'; // Tıklanabilir olduğunu göstermek için imleç stili
+
+                box.addEventListener('click', function() {
+                    this.classList.add('clicked');
+                    
+                    const categoryText = this.textContent.trim();
+                    // Kategoriyi URL dostu hale getir (slugify)
+                    // Türkçe karakterleri de düşünerek basit bir slugify fonksiyonu:
+                    const slugify = (text) => {
+                        const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìıİłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+                        const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+                        const p = new RegExp(a.split('').join('|'), 'g')
+
+                        return text.toString().toLowerCase()
+                            .replace(/\s+/g, '-') // Boşlukları - ile değiştir
+                            .replace(p, c => b.charAt(a.indexOf(c))) // Özel karakterleri dönüştür
+                            .replace(/&/g, '-and-') // & karakterini '-and-' ile değiştir
+                            .replace(/[^\w\-]+/g, '') // Alfanümerik olmayan karakterleri kaldır (tire hariç)
+                            .replace(/\-\-+/g, '-') // Birden fazla tireyi tek tire yap
+                            .replace(/^-+/, '') // Başlangıçtaki tireleri kaldır
+                            .replace(/-+$/, '') // Sondaki tireleri kaldır
+                    };
+
+                    const categorySlug = slugify(categoryText);
+                    const targetUrl = `${categorySlug}.html`; // Örneğin: tyt-konulari.html
+
+                    console.log('Yönlendiriliyor: ' + targetUrl); // Test için konsola yazdır
+
+                    // Animasyon bittikten sonra yönlendirme yap ve 'clicked' sınıfını kaldır
+                    this.addEventListener('animationend', () => {
+                        this.classList.remove('clicked');
+                        window.location.href = targetUrl; // Yeni sayfaya yönlendir
+                    }, { once: true }); 
+                });
+            });
+        });
+    </script>
+
+    <div class="popular-blogs-section">
+        <h2 class="popular-blogs-title"><span>BİKOÇLUK</span>BLOGLAR</h2>
+        <div class="popular-blogs-scroller-container"> 
+            <div class="popular-blogs-scroller">
+                <!-- Blog Kartı 1 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-1.jpg" alt="TYT Türkçe Özet"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Türkçe Özet PDF | TYT Dil Bilgisi Özet PDF</h3>
+                        <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 21.08.2023 | <i class="fas fa-clock"></i> 2 dk.</p>
+                            <p class="blog-excerpt">TYT'deki tüm derslerin konularını ve soru dağılımını incelediğimiz blog serimizde bugünkü konumuz TYT Fen konuları ve TYT Fen...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog Kartı 2 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-2.jpg" alt="TYT Biyoloji Özet"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Biyoloji Özet PDF</h3>
+                         <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 20.08.2023 | <i class="fas fa-clock"></i> 3 dk.</p>
+                            <p class="blog-excerpt">Biyoloji dersine ait TYT konularının özetlerini ve önemli notları burada bulabilirsiniz...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog Kartı 3 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-3.jpg" alt="TYT Tarih Özet"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Tarih Özet PDF</h3>
+                        <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 19.08.2023 | <i class="fas fa-clock"></i> 4 dk.</p>
+                            <p class="blog-excerpt">Tarih konularının TYT için özetlenmiş halleri ve püf noktaları...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog Kartı 4 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-4.jpg" alt="TYT Matematik Konuları"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Matematik Konuları 2024 ve TYT Matematik...</h3>
+                         <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 18.08.2023 | <i class="fas fa-clock"></i> 5 dk.</p>
+                            <p class="blog-excerpt">2024 TYT Matematik konuları ve soru dağılımları hakkında detaylı bilgiler...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog Kartı 5 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-5.jpg" alt="Açık Lise"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">Açık Liseye Geçmek Mantıklı Mı? | Açık Lise...</h3>
+                        <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 17.08.2023 | <i class="fas fa-clock"></i> 3 dk.</p>
+                            <p class="blog-excerpt">Açık liseye geçiş süreci ve avantajları, dezavantajları üzerine bir inceleme...</p>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Blog Kartı 6 -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-6.jpg" alt="TYT Fizik Özet"> 
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Fizik Özet PDF</h3>
+                        <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 16.08.2023 | <i class="fas fa-clock"></i> 4 dk.</p>
+                            <p class="blog-excerpt">TYT Fizik konularının kapsamlı özetleri ve formülleri...</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Daha fazla blog kartı ekleyebilirsiniz. Aynı yapıyı kopyalayıp içerikleri değiştirin. -->
+                <!-- Sonsuz kaydırma efekti için kartları çoğaltabilirsiniz -->
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-1.jpg" alt="TYT Türkçe Özet">
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Türkçe Özet PDF | TYT Dil Bilgisi Özet PDF</h3>
+                        <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 21.08.2023 | <i class="fas fa-clock"></i> 2 dk.</p>
+                            <p class="blog-excerpt">TYT'deki tüm derslerin konularını ve soru dağılımını incelediğimiz blog serimizde bugünkü konumuz TYT Fen konuları ve TYT Fen...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="css/images/placeholder-blog-2.jpg" alt="TYT Biyoloji Özet">
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">TYT Biyoloji Özet PDF</h3>
+                         <div class="blog-card-details">
+                            <p class="blog-date-time"><i class="fas fa-calendar-alt"></i> 20.08.2023 | <i class="fas fa-clock"></i> 3 dk.</p>
+                            <p class="blog-excerpt">Biyoloji dersine ait TYT konularının özetlerini ve önemli notları burada bulabilirsiniz...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const nightModeToggle = document.getElementById('night-mode-toggle');
+        const body = document.body;
+
+        // Sayfa yüklendiğinde kayıtlı temayı uygula
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            body.classList.add(currentTheme);
+            if (currentTheme === 'night-mode') {
+                nightModeToggle.classList.remove('fa-moon');
+                nightModeToggle.classList.add('fa-sun');
+            } else {
+                nightModeToggle.classList.remove('fa-sun');
+                nightModeToggle.classList.add('fa-moon');
+            }
+        } else {
+            // Varsayılan olarak ay ikonu (gündüz modu)
+             if (body.classList.contains('night-mode')) { // Eğer body'de night-mode varsa (CSS'den geliyorsa)
+                nightModeToggle.classList.remove('fa-moon');
+                nightModeToggle.classList.add('fa-sun');
+            } else {
+                nightModeToggle.classList.remove('fa-sun');
+                nightModeToggle.classList.add('fa-moon');
+            }
+        }
+
+        nightModeToggle.addEventListener('click', () => {
+            body.classList.toggle('night-mode');
+
+            if (body.classList.contains('night-mode')) {
+                nightModeToggle.classList.remove('fa-moon');
+                nightModeToggle.classList.add('fa-sun');
+                localStorage.setItem('theme', 'night-mode');
+            } else {
+                nightModeToggle.classList.remove('fa-sun');
+                nightModeToggle.classList.add('fa-moon');
+                localStorage.setItem('theme', 'day-mode'); // veya null/boş string
+            }
+        });
+    </script>
+
+    <!-- Karanlık mod için JavaScript kodu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Karanlık mod toggle işlevi
+            const nightModeToggle = document.getElementById('night-mode-toggle');
+            const body = document.body;
+            
+            // Kullanıcının tercihini localStorage'dan al
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Sayfa yüklendiğinde kullanıcının tercihine göre modu ayarla
+            if (isDarkMode) {
+                body.classList.add('night-mode');
+                nightModeToggle.classList.remove('fa-moon');
+                nightModeToggle.classList.add('fa-sun');
+            }
+            
+            // Toggle düğmesine tıklama olayı ekle
+            nightModeToggle.addEventListener('click', function() {
+                body.classList.toggle('night-mode');
+                
+                // İkon değiştir
+                if (body.classList.contains('night-mode')) {
+                    nightModeToggle.classList.remove('fa-moon');
+                    nightModeToggle.classList.add('fa-sun');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    nightModeToggle.classList.remove('fa-sun');
+                    nightModeToggle.classList.add('fa-moon');
+                    localStorage.setItem('darkMode', 'false');
+                }
+            });
+            
+            // Kategori kutuları için tıklama animasyonu
+            const categoryBoxes = document.querySelectorAll('.category-box');
+            categoryBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    this.style.animation = 'categoryClickAnimation 0.5s';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+            });
+            
+            // Kategori arama işlevi
+            const searchInput = document.getElementById('categorySearchInput');
+            const searchButton = document.getElementById('categorySearchButton');
+            
+            function searchCategories() {
+                const searchTerm = searchInput.value.toLowerCase();
+                categoryBoxes.forEach(box => {
+                    const categoryText = box.textContent.toLowerCase();
+                    if (categoryText.includes(searchTerm)) {
+                        box.style.display = 'block';
+                    } else {
+                        box.style.display = 'none';
+                    }
+                });
+            }
+            
+            searchButton.addEventListener('click', searchCategories);
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    searchCategories();
+                }
+            });
+        });
+    </script>
+    </body>
+</html>

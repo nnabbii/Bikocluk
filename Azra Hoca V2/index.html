@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ykssayaç.html'den kopyalanan stiller */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Aşağıdaki 3 satır kaldırıldı veya yorum satırına alındı */
+            /* display: flex; */
+            /* flex-direction: column; */
+            /* align-items: center; */
+            min-height: 100vh;
+            color: #333;
+            background-color: #fff; /* Normal mod için beyaz arka plan */
+            transition: background-color 0.5s ease, color 0.5s ease;
+            padding-top: 100px; 
+            box-sizing: border-box;
+            position: relative; /* Baloncukların doğru konumlanması için */
+            overflow-x: hidden; /* Yatay taşmayı engelle */
+        }
+
+        body.night-mode {
+            color: #f0f0f0;
+            background-color: #1a1a1a; /* Karanlık mod için koyu arka plan */
+        }
+
+        .bubbles-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* İçeriğin arkasında kalması için */
+            overflow: hidden;
+        }
+
+        .bubbles-background span {
+            position: absolute;
+            bottom: -120px; 
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: rise 20s infinite ease-in;
+            opacity: 0;
+            filter: blur(12px);
+            background-color: rgba(128, 0, 128, 0.35); /* Varsayılan mor */
+        }
+
+        .bubbles-background span:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 18s; animation-delay: 0s; background-color: rgba(148, 0, 211, 0.4); } /* Mor tonu */
+        .bubbles-background span:nth-child(2) { width: 30px; height: 30px; left: 20%; animation-duration: 12s; animation-delay: 1.5s; background-color: rgba(153, 50, 204, 0.45); } /* Mor tonu */
+        .bubbles-background span:nth-child(3) { width: 50px; height: 50px; left: 30%; animation-duration: 20s; animation-delay: 2.5s; background-color: rgba(186, 85, 211, 0.35); }
+        .bubbles-background span:nth-child(4) { width: 90px; height: 90px; left: 40%; animation-duration: 16s; animation-delay: 0.5s; background-color: rgba(128, 0, 128, 0.5); }
+        .bubbles-background span:nth-child(5) { width: 35px; height: 35px; left: 50%; animation-duration: 13s; animation-delay: 1s; background-color: rgba(218, 112, 214, 0.4); }
+        .bubbles-background span:nth-child(6) { width: 60px; height: 60px; left: 60%; animation-duration: 19s; animation-delay: 3s; background-color: rgba(147, 112, 219, 0.45); }
+        .bubbles-background span:nth-child(7) { width: 25px; height: 25px; left: 70%; animation-duration: 11s; animation-delay: 0.2s; background-color: rgba(199, 21, 133, 0.35); }
+        .bubbles-background span:nth-child(8) { width: 70px; height: 70px; left: 80%; animation-duration: 17s; animation-delay: 2s; background-color: rgba(221, 160, 221, 0.45); }
+        .bubbles-background span:nth-child(9) { width: 45px; height: 45px; left: 90%; animation-duration: 14s; animation-delay: 0.8s; background-color: rgba(180, 80, 200, 0.42); }
+        .bubbles-background span:nth-child(10) { width: 100px; height: 100px; left: 5%; animation-duration: 22s; animation-delay: 1.2s; background-color: rgba(160, 32, 240, 0.38); }
+        .bubbles-background span:nth-child(11) { width: 55px; height: 55px; left: 25%; animation-duration: 15s; animation-delay: 3.5s; background-color: rgba(138, 43, 226, 0.41); }
+        .bubbles-background span:nth-child(12) { width: 75px; height: 75px; left: 75%; animation-duration: 21s; animation-delay: 0.7s; background-color: rgba(177, 100, 220, 0.48); }
+
+        body.night-mode .bubbles-background span:nth-child(1) { background-color: rgba(255, 165, 0, 0.4); } /* Turuncu tonu */
+        body.night-mode .bubbles-background span:nth-child(2) { background-color: rgba(255, 140, 0, 0.45); } /* Turuncu tonu */
+        body.night-mode .bubbles-background span:nth-child(3) { background-color: rgba(255, 192, 70, 0.35); }
+        body.night-mode .bubbles-background span:nth-child(4) { background-color: rgba(240, 178, 60, 0.5); }
+        body.night-mode .bubbles-background span:nth-child(5) { background-color: rgba(255, 150, 50, 0.4); }
+        body.night-mode .bubbles-background span:nth-child(6) { background-color: rgba(230, 160, 40, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(7) { background-color: rgba(255, 180, 80, 0.35); }
+        body.night-mode .bubbles-background span:nth-child(8) { background-color: rgba(220, 140, 30, 0.45); }
+        body.night-mode .bubbles-background span:nth-child(9) { background-color: rgba(250, 190, 85, 0.42); }
+        body.night-mode .bubbles-background span:nth-child(10) { background-color: rgba(255, 130, 20, 0.38); }
+        body.night-mode .bubbles-background span:nth-child(11) { background-color: rgba(245, 170, 65, 0.41); }
+        body.night-mode .bubbles-background span:nth-child(12) { background-color: rgba(235, 155, 45, 0.48); } /* Turuncu tonu */
+
+        @keyframes rise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; bottom: 120vh; }
+        }
+
+        .navbar { /* ykssayaç.html'den gelen .navbar stili */
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            /* style.css'deki .navbar stilleri (örn: background, shadow) ile birleşecek.
+               Eğer ykssayaç.html'deki gibi özel bir arkaplan isteniyorsa (örn: blur),
+               o stiller buraya eklenebilir veya style.css'de güncellenebilir.
+               ykssayaç.html'de .navbar için özel background-color/backdrop-filter yorumlanmış,
+               bu yüzden style.css'deki .navbar arkaplanı geçerli olacaktır.
+               Gece modu için özel arkaplan aşağıda tanımlanmıştır.
+            */
+        }
+
+        .navbar-container { /* ykssayaç.html'den */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; 
+            max-width: 1200px; 
+            margin: 0 auto;
+            padding: 0 20px; 
+            height: 80px;
+        }
+
+        .navbar-logo { /* ykssayaç.html'den */
+            display: flex; 
+            align-items: center;
+            height: 100%;
+        }
+        
+        .navbar-logo a { /* ykssayaç.html'den */
+            display: inline-flex; 
+            align-items: center;
+            height: 100%;
+        }
+        
+        .navbar-logo img { /* ykssayaç.html'den */
+            height: 160px; 
+            width: auto;
+        }
+        
+        .navbar-links li a { /* ykssayaç.html'den, ikon ve metin hizalaması için */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            white-space: nowrap;
+            gap: 0.4em;
+            /* Renk, padding vb. style.css'deki .navbar-links a'dan gelecektir. */
+        }
+
+        .navbar-cta { /* ykssayaç.html'den */
+            margin-left: 20px;
+        }
+
+        .navbar-cta .cta-button { /* ykssayaç.html'den, buton içi hizalama için */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            /* Temel buton stilleri (background, color, padding) style.css'den gelecektir. */
+        }
+        
+        /* Gece Modu Navbar Stilleri (ykssayaç.html'den) */
+        body.night-mode .navbar {
+            background-color: #1a1a1a; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5); 
+        }
+        /* body.night-mode .navbar-logo a img { } */ /* Gerekirse logo için gece modu filtresi eklenebilir */
+        
+        body.night-mode .navbar-links li a {
+            color: #cccccc; 
+        }
+        body.night-mode .navbar-links li a:hover,
+        body.night-mode .navbar-links li.dropdown-parent:hover > a { /* style.css'deki dropdown yapısıyla uyumlu */
+            color: #ffffff; 
+            background-color: #333333; 
+        }
+        body.night-mode .navbar-links .dropdown-menu { /* style.css'deki dropdown yapısıyla uyumlu */
+            background-color: #2c2c2c; 
+            /* border-color: #444444; */ /* Eğer style.css'de border varsa */
+        }
+        body.night-mode .navbar-links .dropdown-menu li a {
+            color: #bbbbbb;
+        }
+        body.night-mode .navbar-links .dropdown-menu li a:hover {
+            color: #ffffff;
+            background-color: #404040;
+        }
+        body.night-mode .navbar-cta .cta-button { /* style.css'deki .cta-button'a gece modu uygular */
+            background-color: #007bff; 
+            color: #ffffff;
+            border: 1px solid #007bff; /* ykssayaç.html'deki gibi */
+        }
+        body.night-mode .navbar-cta .cta-button:hover {
+            background-color: #0056b3; /* ykssayaç.html'deki gibi */
+            border-color: #0056b3; /* ykssayaç.html'deki gibi */
+        }
+        body.night-mode .navbar-links li a .fas { /* Font Awesome ikonları için */
+            color: #cccccc;
+        }
+        body.night-mode .navbar-links li a:hover .fas {
+            color: #ffffff;
+        }
+
+        #night-mode-toggle {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 18px 15px 18px 20px;
+            background-color: rgba(255, 255, 255, 0.7); /* Gündüz modu arkaplan */
+            color: #FFC107; /* Varsayılan (gündüz) ikon rengi */
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            width: auto;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            z-index: 1001;
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.1);
+        }
+        #night-mode-toggle:hover {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+        body.night-mode #night-mode-toggle {
+            background-color: rgba(30, 30, 30, 0.7);
+            /* İkon rengi JS tarafından ayarlanacak (fa-sun veya fa-moon class'ına göre) */
+            box-shadow: 2px 0px 10px rgba(0,0,0,0.3);
+        }
+        body.night-mode #night-mode-toggle.fa-moon { /* Gece modu aktif, ay ikonu gösteriliyor */
+             color: #FFC107; /* Ay ikonu için sarı */
+        }
+        body.night-mode #night-mode-toggle.fa-sun { /* Gece modu aktif, güneş ikonu gösteriliyor (toggle sonrası) */
+             color: #f0f0f0; /* Güneş ikonu için açık renk */
+        }
+        #night-mode-toggle.fa-sun { /* Gündüz modu aktif, güneş ikonu gösteriliyor */
+            color: #FFC107;
+        }
+        body.night-mode #night-mode-toggle:hover {
+            background-color: rgba(50, 50, 50, 0.9);
+        }
+
+        /* Responsive Navbar Stilleri (ykssayaç.html'den adapte edildi) */
+        @media (max-width: 768px) {
+            body { 
+                padding-top: 80px; 
+            }
+            .navbar-container {
+                height: 70px;
+            }
+            .navbar-logo img {
+                height: 120px;
+            }
+            /* style.css'deki .navbar-links { display: none; } kuralı
+               bu çözünürlükte hala geçerli olacaktır ve menü linklerini gizleyecektir.
+               Eğer ykssayaç.html'deki gibi linkler görünür kalsın isteniyorsa,
+               style.css'deki o kural override edilmeli veya kaldırılmalıdır.
+               Şimdilik style.css'in RWD davranışına bırakılmıştır.
+            */
+        }
+
+        @media (max-width: 480px) {
+            .navbar-container {
+                height: 60px;
+            }
+            .navbar-logo img {
+                height: 100px;
+            }
+            #night-mode-toggle {
+                font-size: 1.5rem;
+                padding: 15px 12px 15px 18px;
+            }
+        }
+    </style>
+</head>
+<body class=""> <!-- JS bu class'ı 'night-mode' olarak değiştirebilir -->
+
+    <div class="bubbles-background">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <nav class="navbar"> <!-- Bu bölüm ykssayaç.html'den gelenle değiştirildi -->
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="index.html"><img src="css/images/LOGO 1.png" alt="logo" /></a> <!-- Logo ykssayaç.html'den -->
+            </div>
+            <ul class="navbar-links"> <!-- Linkler ykssayaç.html'den -->
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li class="dropdown-parent">
+                    <a href="#">YKS Atlas</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pomodoro.html">• POMODORO Zamanlayıcı  •</a></li>
+                        <li><a href="#">• YKS Puan Hesaplama •</a></li>
+                        <li><a href="#">• LGS Puan Hesaplama •</a></li>
+                        <li><a href="ykssayaç.html">• YKS Sayaç •</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#"><i class="fas fa-shopping-bag"></i> Mağaza</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Portal</a></li>
+                <li><a href="#">Bize Ulaşın</a></li>
+            </ul>
+            <div class="navbar-cta">
+                <a href="#" class="cta-button">İletişime geç!</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>YKS Yolculuğunda Destek AL</h1>
+            <h2>Hedeflerine Herkesten Hızlı Ulaş!</h2>
+            <p>YKS'ye hazırlık sürecini senin için daha kolay ve verimli bir hale getirerek seni hayalindeki üniversite ve bölüme ulaştırmayı amaçlıyoruz.</p>
+            <a href="#" class="destek-button">Destek Al</a>
+        </div>
+        <div class="hero-image">
+            <img src="css/images/c71db0c3-0ccc-4bb1-852b-075a9d6583f2.png" alt="YKS Öğrenci" class="student-image">
+        </div>
+    </div>
+
+    <div class="about-section">
+        <div class="about-left">
+            <img src="css/images/LOGO 2.png" alt="Koçluk Logo" class="kocluk-logo">
+            <div class="student-count">
+                <span>500+ Kayıtlı Öğrenci</span>
+                <div class="student-avatars">
+                    <img src="css/images/1ccb543c-05f3-4e9f-be2d-3bab00f29726.png" alt="Öğrenci Avatarları">
+                </div>
+            </div>
+        </div>
+        <div class="about-right">
+            <span class="section-tag">Biz Kimiz?</span>
+            <h2>Yüzlerce Öğrenci <span class="highlight">YKS'ye</span> Bizimle Hazırlanıyor</h2>
+            <p>Yüzlerce öğrenci YKS'ye bizimle hazırlanıyor! Deneyimli koçlarımız ve kişiye özel programlarımızla başarıya ulaşmanız için yanınızdayız. Potansiyelinizi birlikte keşfedelim.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <span class="feature-icon">➜</span>
+                    <span class="feature-text">Tecrübeli Koçlar</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">➜</span>
+                    <span class="feature-text">Kişiye Özel Çalışma Programları</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">➜</span>
+                    <span class="feature-text">Deneme ve Net Analizleri</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">➜</span>
+                    <span class="feature-text">Günlük Takip</span>
+                </div>
+            </div>
+
+            <a href="#" class="kocluk-button">Koçluk Al →</a>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <div class="stat-item">
+            <h3 class="counter" data-target="60">0</h3>
+            <span class="stat-label">Koç</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <h3 class="counter" data-target="500">0</h3>
+            <span class="stat-label">Öğrenci</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <h3 class="counter" data-target="40000">0</h3>
+            <span class="stat-label">Görüşme Sayısı</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <h3 class="counter" data-target="100000">0</h3>
+            <span class="stat-label">Takipçi</span>
+        </div>
+    </div>
+
+    <div class="kocluk-section">
+        <div class="kocluk-container">
+            <div class="kocluk-image">
+                <img src="css/images/7afc864f-be75-435b-b94e-7cb4dc9e6171.png" alt="Öğrenci Koç" class="student-image">
+            </div>
+            <div class="kocluk-content">
+                <h1>YKS'de Derece Yapmış</h1>
+                <h2>Koçlardan Öğrenin</h2>
+                <p>YKS sürecinden seninle aynı sıkıntıları çekmiş, aynı yollardan geçmiş, kendi öğrenme methodlarını sistemleştirip sana sunan koçluk ekibimizle çalış.</p>
+                <a href="#" class="destek-button">Koçluk Desteği Al</a>
+            </div>
+        </div>
+        <div class="sss">
+            <h2>Destek AI Koçluk Sistemi nedir?</h2>
+            <div class="sss-content active">
+                <p>Destek AI Koçluk Sistemi, haftalık görüşmeler ve sana özel hazırlanan haftalık program, kaynak ve deneme önerisi, konu ve müfredat takibi, eksiklerine göre tekrarlar ve deneme analizleri gibi seni hedefine en verimli şekilde ulaştıracak destekleri içermektedir.</p>
+            </div>
+            
+            <div class="sss-item">
+                <h3>Neden koçluk almalıyım?</h3>
+                <div class="sss-content">
+                    <p>Koçluk sistemi ile:</p>
+                    <ul>
+                        <li>Kişiselleştirilmiş çalışma programı</li>
+                        <li>Düzenli performans takibi</li>
+                        <li>Motivasyon ve hedef odaklı çalışma</li>
+                        <li>Zaman yönetimi desteği</li>
+                        <li>Stres ve kaygı yönetimi</li>
+                        <li>Verimli ders çalışma teknikleri</li>
+                    </ul>
+                    <p>gibi birçok konuda profesyonel destek alarak başarıya daha hızlı ulaşabilirsiniz.</p>
+                </div>
+            </div>
+
+            <div class="sss-item">
+                <h3>Kimler koçluk alabilir?</h3>
+                <div class="sss-content">
+                    <p>YKS'ye hazırlanan:</p>
+                    <ul>
+                        <li>12. sınıf öğrencileri</li>
+                        <li>Mezun durumunda olan öğrenciler</li>
+                        <li>Dershaneye giden veya özel ders alan öğrenciler</li>
+                        <li>Kendi başına çalışan öğrenciler</li>
+                    </ul>
+                    <p>koçluk sistemimizden faydalanabilir.</p>
+                </div>
+            </div>
+
+            <div class="sss-item">
+                <h3>Koçluğa başlamak için geç mi kaldım?</h3>
+                <div class="sss-content">
+                    <p>Hayır! YKS hazırlık sürecinin her aşamasında koçluk desteği alabilirsiniz. Sistemimiz, bulunduğunuz seviyeye ve ihtiyaçlarınıza göre özelleştirilmiş programlar sunmaktadır. Sınava ne kadar süre kaldığına bakılmaksızın, doğru strateji ve planlama ile hedeflerinize ulaşmanıza yardımcı oluyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const counters = document.querySelectorAll('.counter');
+        
+        const startCounting = (element) => {
+            const target = parseInt(element.getAttribute('data-target'));
+            let count = 0;
+            const duration = 2000; // 2 saniye
+            const increment = target / (duration / 16); // 60fps için
+
+            const updateCount = () => {
+                count += increment;
+                if (count < target) {
+                    element.innerText = Math.floor(count).toLocaleString();
+                    requestAnimationFrame(updateCount);
+                } else {
+                    element.innerText = target.toLocaleString();
+                }
+            };
+
+            updateCount();
+        };
+
+        // Sayaçları başlat
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startCounting(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        counters.forEach(counter => observer.observe(counter));
+    </script>
+
+    <script>
+        // SSS için açılır-kapanır menü işlevselliği
+        document.querySelectorAll('.sss-item h3').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const isActive = button.classList.contains('active');
+                
+                // Tüm active sınıflarını kaldır
+                document.querySelectorAll('.sss-item h3').forEach(h => h.classList.remove('active'));
+                document.querySelectorAll('.sss-content').forEach(c => c.style.display = 'none');
+                
+                // Tıklanan öğeyi aç/kapat
+                if (!isActive) {
+                    button.classList.add('active');
+                    content.style.display = 'block';
+                }
+            });
+        });
+    </script>
+
+    <div class="countdown-section">
+        <h2>YKS'ye Kaç Gün Kaldı?</h2>
+        <div class="countdown-container">
+            <div class="countdown-item" style="--color: #28a745">
+                <div class="countdown-circle">
+                    <span class="countdown-number" id="days">39</span>
+                </div>
+                <span class="countdown-label">Gün</span>
+            </div>
+            <div class="countdown-item" style="--color: #dc3545">
+                <div class="countdown-circle">
+                    <span class="countdown-number" id="hours">19</span>
+                </div>
+                <span class="countdown-label">Saat</span>
+            </div>
+            <div class="countdown-item" style="--color: #ffc107">
+                <div class="countdown-circle">
+                    <span class="countdown-number" id="minutes">40</span>
+                </div>
+                <span class="countdown-label">Dakika</span>
+            </div>
+            <div class="countdown-item" style="--color: #17a2b8">
+                <div class="countdown-circle">
+                    <span class="countdown-number" id="seconds">57</span>
+                </div>
+                <span class="countdown-label">Saniye</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        // YKS tarihini ayarlayın (örnek: 2024 YKS tarihi)
+        const yksDate = new Date('2025-06-21T10:00:00').getTime();
+    
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = yksDate - now;
+            const totalDays = Math.ceil((yksDate - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24));
+    
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+            // Yüzdeleri hesapla
+            const daysProgress = (days / totalDays) * 100;
+            const hoursProgress = (hours / 24) * 100;
+            const minutesProgress = (minutes / 60) * 100;
+            const secondsProgress = (seconds / 60) * 100;
+    
+            // Daireleri güncelle
+            document.querySelector('[style*="--color: #28a745"]').style.setProperty('--progress', `${daysProgress}%`);
+            document.querySelector('[style*="--color: #dc3545"]').style.setProperty('--progress', `${hoursProgress}%`);
+            document.querySelector('[style*="--color: #ffc107"]').style.setProperty('--progress', `${minutesProgress}%`);
+            document.querySelector('[style*="--color: #17a2b8"]').style.setProperty('--progress', `${secondsProgress}%`);
+    
+            // Sayıları güncelle
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+    
+        // Her saniye güncelle
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // İlk yükleme için
+    </script>
+
+    <div class="features-section">
+        <div class="section-header">
+            <h2>Başarı Yolculuğuna Adım Atın</h2>
+            <p>Hedeflerinize Ulaşmak için Şimdi Başlayın!</p>
+            <p class="subtitle">Eğitim yolculuğunuzu, deneyimli koçlarımızımızın rehberliği ve kişiye özel çalışma programlarımızımızla başlatın. Başarıya giden yolda her adımda yanınızdayız.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Derece Yapandan Öğren</h3>
+                <p>YKS'de derece yapmış koçlarımızla birebir çalışma fırsatı. Başarınızı garantilemek için tecrübelerinden faydalanın.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Günlük Takip Sistemi</h3>
+                <p>Her gün koçunuzla ilerlemenizi takip edin, eksiklerinizi hızla belirleyin ve sürekli gelişim sağlayın.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3>4+ Yıllık Tecrübe</h3>
+                <p>Deneyimli ekibimizle 4 yıldan fazladır öğrencilerin hayallerini gerçekleştirmek için çalışıyoruz.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>7/24 İletişim</h3>
+                <p>Günün her saati koçlarınıza ulaşın, sorularınızı anında cevaplayın. Eğitim sürecinde asla yalnız değilsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastScroll = 0;
+        const navbar = document.querySelector('.navbar');
+        const scrollThreshold = 100;
+    
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+    
+            if (currentScroll <= scrollThreshold) {
+                navbar.classList.remove('navbar--hidden');
+                return;
+            }
+    
+            if (currentScroll > lastScroll && !navbar.classList.contains('navbar--hidden')) {
+                // Aşağı scroll
+                navbar.classList.add('navbar--hidden');
+            } else if (currentScroll < lastScroll && navbar.classList.contains('navbar--hidden')) {
+                // Yukarı scroll
+                navbar.classList.remove('navbar--hidden');
+            }
+    
+            lastScroll = currentScroll;
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="css/images/LOGO 1.png" alt="Destek AI" class="footer-logo-img">
+                <p>Bizler, zorlu YKS sürecinde derece yaparak hedeflerine ulaşan bir grup derece öğrencisiyiz.</p>
+                <a href="mailto:bikoçluk@info.com">bikoçluk@info.com</a>
+                <a href="tel:+9000000000">+90 000 000 00</a>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Kısayollar</h3>
+                <ul>
+                    <li><a href="#">Biz Kimiz?</a></li>
+                    <li><a href="#">Başarılarımız</a></li>
+                    <li><a href="#">Paketlerimiz</a></li>
+                    <li><a href="#">Ücretsiz Programlar</a></li>
+                    <li><a href="#">Kanal Kaynak Önerileri</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-social">
+                <h3>İletişime Geçin</h3>
+                <p>Sosyal medya platformlarından bizi takip etmeyi unutmayın!</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2024 Electro A.Ş. Tüm hakları saklıdır.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Aydınlatma Metni</a>
+                <span>|</span>
+                <a href="#">Gizlilik Sözleşmesi</a>
+            </div>
+        </div>
+        
+    </footer>
+
+<!-- Düğme HTML'de script'ten önce olmalı -->
+<div id="night-mode-toggle" class="fas fa-moon"></div>
+
+<!-- SCRIPT KISMI -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const nightModeToggle = document.getElementById('night-mode-toggle');
+    const body = document.body;
+
+    // Düğme bulunamazsa hata mesajı ver ve çık
+    if (!nightModeToggle) {
+        console.error('Karanlık mod değiştirme düğmesi (#night-mode-toggle) bulunamadı.');
+        return;
+    }
+
+    // Kayıtlı temayı veya varsayılanı uygulama fonksiyonu
+    const applyTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+
+        if (savedTheme === 'night-mode') {
+            body.classList.add('night-mode');
+            nightModeToggle.classList.remove('fa-moon');
+            nightModeToggle.classList.add('fa-sun');
+        } else { // 'light-mode' veya kayıt yoksa (varsayılan aydınlık mod)
+            body.classList.remove('night-mode');
+            nightModeToggle.classList.remove('fa-sun');
+            nightModeToggle.classList.add('fa-moon');
+        }
+    };
+
+    // Sayfa ilk yüklendiğinde temayı uygula
+    applyTheme();
+
+    // Düğmeye tıklama olayını dinle
+    nightModeToggle.addEventListener('click', () => {
+        body.classList.toggle('night-mode'); // 'night-mode' class'ını aç/kapat
+
+        // İkonu ve localStorage'ı güncelle
+        if (body.classList.contains('night-mode')) {
+            nightModeToggle.classList.remove('fa-moon');
+            nightModeToggle.classList.add('fa-sun');
+            localStorage.setItem('theme', 'night-mode');
+        } else {
+            nightModeToggle.classList.remove('fa-sun');
+            nightModeToggle.classList.add('fa-moon');
+            localStorage.setItem('theme', 'light-mode');
+        }
+    });
+});
+</script>
+</body>
+</html>
